@@ -202,4 +202,27 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('week-view-btn').addEventListener('click', function () {
         calendar.changeView('timeGridWeek');
     });
+
+    // Ajouter le bouton "Clear All"
+    document.getElementById('clear-all-btn').addEventListener('click', function () {
+        // Confirmer l'action avec l'utilisateur
+        if (confirm("Êtes-vous sûr de vouloir supprimer tous les raids ? Cette action est irréversible.")) {
+            // Supprimer tous les raids de Firestore
+            db.collection("raids").get().then((snapshot) => {
+                snapshot.forEach((doc) => {
+                    db.collection("raids").doc(doc.id).delete().then(() => {
+                        console.log(`✅ Raid ${doc.id} supprimé !`);
+                    }).catch((error) => {
+                        console.error(`❌ Erreur lors de la suppression du raid ${doc.id}:`, error);
+                    });
+                });
+
+                // Effacer tous les événements du calendrier
+                calendar.getEvents().forEach(event => event.remove());
+                console.log("✅ Tous les événements du calendrier ont été supprimés.");
+            }).catch(error => {
+                console.error("❌ Erreur lors de la récupération des raids à supprimer :", error);
+            });
+        }
+    });
 });
