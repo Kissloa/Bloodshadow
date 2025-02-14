@@ -106,14 +106,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Retirer un raid
     document.getElementById('remove-raid-btn').addEventListener('click', function () {
-        let raidToRemove = document.getElementById('raid-select-remove').value;
+        let raidToRemoveId = document.getElementById('raid-select-remove').value;
 
-        if (!raidToRemove) {
+        if (!raidToRemoveId) {
             alert("❌ Sélectionnez un raid à supprimer !");
             return;
         }
 
-        db.collection("raids").doc(raidToRemove).delete().then(() => {
+        db.collection("raids").doc(raidToRemoveId).delete().then(() => {
             console.log("✅ Raid supprimé !");
         }).catch(error => console.error("❌ Erreur :", error));
     });
