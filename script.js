@@ -55,13 +55,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // Charger les raids en temps réel depuis Firestore
     function loadRaidsFromFirestore() {
         db.collection("raids").onSnapshot((snapshot) => {
+            // Nettoyer les événements du calendrier
             calendar.getEvents().forEach(event => event.remove());
 
+            // Vider les options des sélecteurs
             let raidSelectRemove = document.getElementById('raid-select-remove');
             let raidSelectInscription = document.getElementById('raid-select-inscription');
             raidSelectRemove.innerHTML = '<option value="">-- Sélectionner un Raid --</option>';
             raidSelectInscription.innerHTML = '<option value="">-- Sélectionner un Raid --</option>';
 
+            // Ajouter les nouveaux raids dans la liste déroulante et les événements du calendrier
             snapshot.forEach(doc => {
                 let raid = doc.data();
                 let newEvent = { 
@@ -113,9 +116,11 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // Supprimer le raid de Firestore
         db.collection("raids").doc(raidToRemoveId).delete().then(() => {
             console.log("✅ Raid supprimé !");
-        }).catch(error => console.error("❌ Erreur :", error));
+            loadRaidsFromFirestore();  // Recharger les raids après suppression
+        }).catch(error => console.error("❌ Erreur lors de la suppression :", error));
     });
 
     // S'inscrire à un raid
