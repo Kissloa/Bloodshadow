@@ -53,14 +53,26 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.render();
     console.log("✅ Calendrier FullCalendar rendu avec succès");
 
-    // Charger les raids en temps réel depuis Firestore
+    // Charger les raids en temps réel depuis Firestore sans duplication
     function loadRaidsFromFirestore() {
     db.collection("raids").onSnapshot((snapshot) => {
+        calendar.getEvents().forEach(event => event.remove()); // Supprime les événements avant de recharger
+
         snapshot.forEach(doc => {
             let raid = doc.data();
-            let newEvent = { title: raid.title, start: raid.dateTime };
-            calendar.addEvent(newEvent); // Ajoute seulement les nouveaux événements
-            updateRaidSelectLists(raid.title);
+            let existingEvent = calendar.getEventById(doc.id);
+
+            // Vérifie si l'événement est déjà présent dans le calendrier
+            if (!existingEvent) {
+                let newEvent = {
+                    id: doc.id,  // Associe chaque événement à son ID Firestore
+                    title: raid.title,
+                    start: raid.dateTime
+                };
+
+                calendar.addEvent(newEvent);
+                updateRaidSelectLists(raid.title);
+            }
         });
     });
 }
