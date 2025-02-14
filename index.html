@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Ark - Planning de Raids</title>
+
+    <!-- FullCalendar CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+
+    <!-- Fichier CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Lost Ark BloodShadow</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Planning de Raid</a></li>
+                <li><a href="raid-legions.html">Raids de Légions</a></li>
+                <li><a href="raid-kazéros.html">Raids de Kazéros</a></li>
+                <li><a href="#contenu-horizontal">Contenu Horizontal</a></li>
+                <li><a href="#Membre de la Guilde">Membre de la Guilde</a></li>
+                <li><a href="https://www.playlostark.com/fr-fr/news" target="_blank">News Lost Ark</a></li>
+                <li><a href="https://www.playlostark.com/fr-fr/support/server-status" target="_blank">Server Status</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Planning de Raids -->
+        <section id="planning">
+            <h2>Planning de Raid</h2>
+            <div class="view-buttons">
+                <button id="month-view-btn">Vue Mois</button>
+                <button id="week-view-btn">Vue Semaine</button>
+            </div>
+            <div id="calendar"></div>
+        </section>
+
+        <!-- Ajout de Raids -->
+        <section id="ajout-raid">
+            <h2>Ajouter un Raid</h2>
+            <label for="raid-select">Choisir un Raid :</label>
+            <select id="raid-select">
+                <option value="Behemoth">Behemoth Raid à 16 Joueurs</option>
+                <option value="Echidna NM">Echidna NM Raid à 8 Joueurs</option>
+                <option value="Echidna HM">Echidna HM Raid à 8 Joueurs</option>
+                <option value="Aegir NM">Aegir NM Raid à 8 Joueurs</option>
+                <option value="Aegir HM">Aegir HM Raid à 8 Joueurs</option>
+                <option value="Brelshaza NM">Brelshaza NM Raid à 8 Joueurs</option>
+                <option value="Brelshaza HM">Brelshaza HM Raid à 8 Joueurs</option>
+                <option value="Thaemine NM">Thaemine NM Raid à 8 Joueurs</option>
+                <option value="Thaemine HM">Thaemine HM Raid à 8 Joueurs</option>
+            </select>
+
+            <p id="raid-ilvl-display">Niveau d'objet : -</p>
+
+            <label for="raid-date">Date du Raid :</label>
+            <input type="date" id="raid-date">
+
+            <label for="raid-time">Heure du Raid :</label>
+            <input type="time" id="raid-time">
+
+            <button id="add-raid-btn">Ajouter le Raid</button>
+        </section>
+
+        <!-- Retirer un Raid -->
+        <section id="retirer-raid">
+            <h2>Retirer un Raid</h2>
+            <label for="raid-select-remove">Sélectionner un Raid à Retirer :</label>
+            <select id="raid-select-remove">
+                <option value="">-- Sélectionner un Raid --</option>
+            </select>
+            <button id="remove-raid-btn" disabled>Retirer le Raid</button>
+        </section>
+
+        <!-- Inscription aux Raids -->
+        <section id="inscription">
+            <h2>Inscription aux Raids</h2>
+            <label for="raid-select-inscription">Choisir un Raid :</label>
+            <select id="raid-select-inscription">
+                <option value="">-- Sélectionnez un Raid --</option>
+            </select>
+
+            <label for="player-name">Votre Pseudo :</label>
+            <input type="text" id="player-name" placeholder="Ex : GuerrierDivin">
+
+            <button id="inscription-btn">S'inscrire</button>
+
+            <h3>Liste des inscrits :</h3>
+            <ul id="inscription-list"></ul>
+        </section>
+    </main>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    
+    <!-- Fichier JS -->
+    <script src="script.js"></script>
+
+</body>
+</html>
