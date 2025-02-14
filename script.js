@@ -55,20 +55,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Charger les raids en temps réel depuis Firestore
     function loadRaidsFromFirestore() {
-        console.log("🔄 Chargement des raids depuis Firestore...");
-        db.collection("raids").onSnapshot((snapshot) => {
-            calendar.getEvents().forEach(event => event.remove());
-            snapshot.forEach(doc => {
-                let raid = doc.data();
-                console.log("✅ Raid chargé :", raid);
-                let newEvent = { id: doc.id, title: raid.title, start: raid.dateTime };
-                calendar.addEvent(newEvent);
-                updateRaidSelectLists(raid.title);
-            });
-        }, (error) => {
-            console.error("❌ Erreur de récupération Firestore :", error);
+    db.collection("raids").onSnapshot((snapshot) => {
+        snapshot.forEach(doc => {
+            let raid = doc.data();
+            let newEvent = { title: raid.title, start: raid.dateTime };
+            calendar.addEvent(newEvent); // Ajoute seulement les nouveaux événements
+            updateRaidSelectLists(raid.title);
         });
-    }
+    });
+}
 
     loadRaidsFromFirestore();
 
