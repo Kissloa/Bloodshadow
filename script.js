@@ -1,3 +1,19 @@
+// Configuration Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyAtERjNNb5VaLjB0TZyfEvQ337fs-a4AfA",
+    authDomain: "bloodshadow-ffb01.firebaseapp.com",
+    projectId: "bloodshadow-ffb01",
+    storageBucket: "bloodshadow-ffb01.appspot.com",
+    messagingSenderId: "1037132816744",
+    appId: "1:1037132816744:web:9f9519d953b7f7a9bff6dd",
+    measurementId: "G-W495PCSSP0"
+};
+
+// Initialisation Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore(app);
+const auth = firebase.auth(app);
+
 document.addEventListener('DOMContentLoaded', function () {
     let calendarEl = document.getElementById('calendar');
 
@@ -13,43 +29,46 @@ document.addEventListener('DOMContentLoaded', function () {
         "Thaemine HM": 1700
     };
 
-    // Initialisation du calendrier FullCalendar
+    // Initialisation du calendrier
     let calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',  // Vue par défaut : Mois
+        initialView: 'dayGridMonth',
         locale: 'fr',
         editable: true,
         selectable: true,
-        eventTimeFormat: { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            meridiem: false 
-        },
+        eventTimeFormat: { hour: '2-digit', minute: '2-digit', meridiem: false },
         headerToolbar: {
-            left: 'prev,next today',  // Ajouter le bouton "today"
+            left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay' // Ajouter les vues Semaine et Mois
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        events: JSON.parse(localStorage.getItem('raids')) || []  // Charger les événements depuis localStorage
+        events: []
     });
 
     calendar.render();
 
-    // Fonction pour charger les raids stockés dans localStorage
-    function loadStoredRaids() {
-        let storedRaids = JSON.parse(localStorage.getItem('raids')) || [];
-        storedRaids.forEach(event => updateRaidSelectLists(event.title));
+    // Charger les raids en temps réel depuis Firestore
+    function loadRaidsFromFirestore() {
+        db.collection("raids").onSnapshot((snapshot) => {
+            calendar.getEvents().forEach(event => event.remove());
+            snapshot.forEach(doc => {
+                let raid = doc.data();
+                let newEvent = { title: raid.title, start: raid.dateTime };
+                calendar.addEvent(newEvent);
+                updateRaidSelectLists(raid.title);
+            });
+        });
     }
 
-    loadStoredRaids();
+    loadRaidsFromFirestore();
 
-    // Affichage du niveau d'objet lors de la sélection d'un raid
+    // Affichage du niveau d'objet lors de la sélection
     document.getElementById('raid-select').addEventListener('change', function () {
         let selectedRaid = this.value;
         let raidIlvl = raidOptions[selectedRaid] || "-";
         document.getElementById('raid-ilvl-display').textContent = `Niveau d'objet : ${raidIlvl}`;
     });
 
-    // Ajouter un raid au calendrier
+    // Ajouter un raid
     document.getElementById('add-raid-btn').addEventListener('click', function () {
         let raidName = document.getElementById('raid-select').value;
         let raidDate = document.getElementById('raid-date').value;
@@ -61,25 +80,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         let raidDateTime = `${raidDate}T${raidTime}`;
-        let formattedDate = new Date(raidDateTime).toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' });
-        let formattedTime = new Date(raidDateTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        let eventTitle = `${raidName} (${raidOptions[raidName]}) - ${raidDate} ${raidTime}`;
 
-        let eventTitle = `${raidName} (${raidOptions[raidName]}) - ${formattedDate} à ${formattedTime}`;
-        let newEvent = { title: eventTitle, start: raidDateTime };
-
-        calendar.addEvent(newEvent);
-        saveRaidsToLocalStorage(calendar.getEvents());
-
-        updateRaidSelectLists(eventTitle);
+        db.collection("raids").add({
+            title: eventTitle,
+            name: raidName,
+            level: raidOptions[raidName],
+            dateTime: raidDateTime,
+            inscriptions: []
+        });
     });
 
-    // Sauvegarder les raids dans localStorage
-    function saveRaidsToLocalStorage(events) {
-        let eventsArray = events.map(event => ({ title: event.title, start: event.startStr }));
-        localStorage.setItem('raids', JSON.stringify(eventsArray));
-    }
-
-    // Mettre à jour les listes déroulantes (Inscription et Retrait)
+    // Mettre à jour les listes déroulantes
     function updateRaidSelectLists(eventTitle) {
         let removeSelect = document.getElementById('raid-select-remove');
         let inscriptionSelect = document.getElementById('raid-select-inscription');
@@ -89,66 +101,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         removeSelect.appendChild(optionRemove);
         inscriptionSelect.appendChild(optionInscription);
-
-        document.getElementById('remove-raid-btn').disabled = false;
     }
 
-    // Retirer un raid du calendrier
+    // Retirer un raid
     document.getElementById('remove-raid-btn').addEventListener('click', function () {
         let raidToRemove = document.getElementById('raid-select-remove').value;
 
-        calendar.getEvents().forEach(event => {
-            if (event.title === raidToRemove) {
-                event.remove();
-            }
+        db.collection("raids").where("title", "==", raidToRemove).get().then(snapshot => {
+            snapshot.forEach(doc => db.collection("raids").doc(doc.id).delete());
         });
-
-        saveRaidsToLocalStorage(calendar.getEvents());
-        removeRaidFromSelectLists(raidToRemove);
     });
 
-    // Supprimer un raid des listes déroulantes
-    function removeRaidFromSelectLists(raidTitle) {
-        let removeSelect = document.getElementById('raid-select-remove');
-        let inscriptionSelect = document.getElementById('raid-select-inscription');
-
-        for (let option of [...removeSelect.options, ...inscriptionSelect.options]) {
-            if (option.value === raidTitle) {
-                option.remove();
-            }
-        }
-
-        if (removeSelect.options.length === 1) {
-            document.getElementById('remove-raid-btn').disabled = true;
-        }
-    }
-
-    // Stocker les inscriptions dans localStorage
-    function saveInscriptionsToLocalStorage(raidName, playerName) {
-        let inscriptions = JSON.parse(localStorage.getItem('inscriptions')) || {};
-        if (!inscriptions[raidName]) {
-            inscriptions[raidName] = [];
-        }
-        inscriptions[raidName].push(playerName);
-        localStorage.setItem('inscriptions', JSON.stringify(inscriptions));
-    }
-
-    // Charger et afficher les inscrits pour un raid spécifique
-    function loadInscriptions(raidName) {
-        let inscriptions = JSON.parse(localStorage.getItem('inscriptions')) || {};
-        let inscriptionList = document.getElementById('inscription-list');
-        inscriptionList.innerHTML = ''; // Vider la liste
-
-        if (inscriptions[raidName]) {
-            inscriptions[raidName].forEach(playerName => {
-                let listItem = document.createElement('li');
-                listItem.textContent = playerName;
-                inscriptionList.appendChild(listItem);
-            });
-        }
-    }
-
-    // Inscription aux raids
+    // S'inscrire à un raid
     document.getElementById('inscription-btn').addEventListener('click', function () {
         let raidName = document.getElementById('raid-select-inscription').value;
         let playerName = document.getElementById('player-name').value;
@@ -158,17 +122,58 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Sauvegarder l'inscription dans localStorage
-        saveInscriptionsToLocalStorage(raidName, playerName);
-
-        // Mettre à jour la liste des inscrits pour ce raid
-        loadInscriptions(raidName);
+        db.collection("raids").where("title", "==", raidName).get().then(snapshot => {
+            snapshot.forEach(doc => {
+                db.collection("raids").doc(doc.id).update({
+                    inscriptions: firebase.firestore.FieldValue.arrayUnion(playerName)
+                });
+            });
+        });
     });
 
-    // Afficher la composition de l'équipe pour un raid sélectionné
+    // Afficher les inscrits
     document.getElementById('raid-select-inscription').addEventListener('change', function () {
         let raidName = this.value;
-        loadInscriptions(raidName);
+
+        db.collection("raids").where("title", "==", raidName).get().then(snapshot => {
+            let inscriptionList = document.getElementById('inscription-list');
+            inscriptionList.innerHTML = '';
+
+            snapshot.forEach(doc => {
+                let inscriptions = doc.data().inscriptions || [];
+                inscriptions.forEach(playerName => {
+                    let listItem = document.createElement('li');
+                    listItem.textContent = playerName;
+                    inscriptionList.appendChild(listItem);
+                });
+            });
+        });
+    });
+
+    // Authentification Firebase
+    document.getElementById('login-btn').addEventListener('click', function () {
+        let email = document.getElementById('email').value;
+        let password = document.getElementById('password').value;
+
+        auth.signInWithEmailAndPassword(email, password)
+            .then(userCredential => {
+                document.getElementById('user-status').textContent = `Connecté : ${userCredential.user.email}`;
+            })
+            .catch(error => alert(error.message));
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+        auth.signOut().then(() => {
+            document.getElementById('user-status').textContent = "Déconnecté";
+        });
+    });
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            document.getElementById('user-status').textContent = `Connecté : ${user.email}`;
+        } else {
+            document.getElementById('user-status').textContent = "Déconnecté";
+        }
     });
 
     // Vue Mois
@@ -181,8 +186,8 @@ document.addEventListener('DOMContentLoaded', function () {
         calendar.changeView('timeGridWeek');
     });
 
-    // Fonction pour le bouton "Today" (Aujourd'hui) pour revenir à la date actuelle
-    document.querySelector('.fc-today-button').addEventListener('click', function() {
+    // Bouton "Aujourd'hui"
+    document.querySelector('.fc-today-button').addEventListener('click', function () {
         calendar.gotoDate(new Date());
     });
 });
