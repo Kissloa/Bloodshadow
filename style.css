@@ -220,6 +220,7 @@ input:hover, select:hover, button:hover {
 }
 
 .popup-content {
+    position: relative; /* Nécessaire pour positionner la croix à l'intérieur */
     background-color: rgb(0, 0, 0);
     padding: 20px;
     margin: 50px auto;
@@ -228,10 +229,18 @@ input:hover, select:hover, button:hover {
     border-radius: 5px;
 }
 
+/* Style de la croix (bouton de fermeture) */
 .popup-close-btn {
     position: absolute;
     top: 10px;
     right: 10px;
     font-size: 24px;
+    color: #fff; /* Couleur de la croix */
     cursor: pointer;
+    transition: color 0.3s ease;
 }
+
+.popup-close-btn:hover {
+    color: #ccc; /* Change la couleur au survol */
+}
+
