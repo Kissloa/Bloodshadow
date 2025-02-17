@@ -15,7 +15,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-
 </head>
 <body>
 
@@ -43,16 +42,58 @@
     </header>
 
     <main>
-        <!-- Planning de Raids -->
-        <section id="planning">
-            <h2>Planning de Raid</h2>
-            <div class="view-buttons">
-                <button id="month-view-btn">Vue Mois</button>
-                <button id="week-view-btn">Vue Semaine</button>
-                <button id="clear-all-btn">Clear All</button> <!-- Nouveau bouton "Clear All" -->
+        <div id="planning-container" style="display: flex; justify-content: space-between;">
+            <!-- Planning de raids -->
+            <section id="planning" style="flex-grow: 1;">
+                <h2>Planning de Raid</h2>
+                <div class="view-buttons">
+                    <button id="month-view-btn">Vue Mois</button>
+                    <button id="week-view-btn">Vue Semaine</button>
+                    <button id="clear-all-btn">Clear All</button>
+                </div>
+                <div id="calendar"></div>
+            </section>
+
+            <!-- Tableau des détails du raid -->
+            <section id="detail-raid" style="display: none;">
+                <h2>Détails du Raid</h2>
+                <table id="raid-details-table">
+                    <tr>
+                        <th>Nom du Raid</th>
+                        <td id="raid-name">-</td>
+                    </tr>
+                    <tr>
+                        <th>Date & Heure</th>
+                        <td id="raid-date-time">-</td>
+                    </tr>
+                    <tr>
+                        <th>Niveau d'objet</th>
+                        <td id="raid-ilvl">-</td>
+                    </tr>
+                    <tr>
+                        <th>Joueurs inscrits</th>
+                        <td id="raid-players">
+                            <ul id="raid-players-list">
+                                <li>Aucun inscrit</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </section>
+        </div>
+
+        <!-- Pop-up de détails du Raid -->
+        <div id="raid-detail-popup" class="popup">
+            <div class="popup-content">
+                <span id="popup-close-btn" class="popup-close-btn">×</span>
+                <h2 id="raid-detail-title">Détails du Raid</h2>
+                <p><strong>Date:</strong> <span id="raid-detail-date"></span></p>
+                <p><strong>Heure:</strong> <span id="raid-detail-time"></span></p>
+                <p><strong>Inscriptions:</strong></p>
+                <ul id="raid-detail-inscriptions-list"></ul>
             </div>
-            <div id="calendar"></div>
-        </section>
+        </div>
+
 
         <!-- Ajout de Raids -->
         <section id="ajout-raid">
@@ -82,38 +123,52 @@
         </section>
 
         <!-- Retirer un Raid -->
-            <section id="retirer-raid">
-                <h2>Retirer un Raid</h2>
-                <label for="raid-select-remove">Sélectionner un Raid à Retirer :</label>
-                <select id="raid-select-remove">
-                    <option value="">-- Sélectionner un Raid --</option>
-                </select>
-                <button id="remove-raid-btn">Retirer un Raid</button>
+        <section id="retirer-raid">
+            <h2>Retirer un Raid</h2>
+            <label for="raid-select-remove">Sélectionner un Raid à Retirer :</label>
+            <select id="raid-select-remove">
+                <option value="">-- Sélectionner un Raid --</option>
+            </select>
+            <button id="remove-raid-btn">Retirer un Raid</button>
         </section>
 
-
-        <!-- Inscription aux Raids -->
+        <!-- Section Inscription -->
         <section id="inscription">
             <h2>Inscription aux Raids</h2>
+
+            <!-- Sélection de l'archétype -->
+            <label for="player-archtype">Choisir un Archétype</label>
+            <select id="player-archtype" required>
+                <option value="">-- Sélectionner un Archétype --</option>
+                <option value="Guerrier">Guerrier</option>
+                <option value="Guerrière">Guerrière</option>
+                <option value="Mage">Mage</option>
+                <option value="Martialiste Femme">Martialiste Femme</option>
+                <option value="Martialiste Homme">Martialiste Homme</option>
+                <option value="Assassin">Assassin</option>
+                <option value="Gunner">Gunner</option>
+                <option value="Gunneuse">Gunneuse</option>
+                <option value="Spécialiste">Spécialiste</option>
+            </select>
+
+            <!-- Sélection de la classe du personnage -->
+            <label for="player-class">Classe du personnage</label>
+            <select id="player-class" required>
+                <option value="">-- Sélectionner une classe --</option>
+                <!-- Les options de classes seront insérées dynamiquement en fonction de l'archétype choisi -->
+            </select>
+
             <label for="raid-select-inscription">Choisir un Raid :</label>
             <select id="raid-select-inscription">
                 <option value="" disabled selected>-- Sélectionnez un Raid --</option>
             </select>
 
             <label for="player-name">Votre Pseudo :</label>
-            <input type="text" id="player-name" placeholder="Ex : GuerrierDivin">
+            <input type="text" id="player-name" placeholder="Ex : GuerrierDivin" required>
 
             <button id="inscription-btn">S'inscrire</button>
-
-            <h3>Liste des inscrits :</h3>
-            <ul id="inscription-list"></ul>
         </section>
 
-        <!-- Mes Inscriptions -->
-        <section id="mes-inscriptions">
-            <h2>Mes Inscriptions</h2>
-            <ul id="my-inscription-list"></ul>
-        </section>
     </main>
 
     <!-- FullCalendar JS -->
