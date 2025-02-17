@@ -9,15 +9,15 @@ const firebaseConfig = {
     measurementId: "G-W495PCSSP0"
 };
 const archtypeClasses = {
-    "Guerrier": ["Guerrier", "Berserker", "Paladin", "Gladiateur"],
-    "Guerrière": ["Guerrière", "Paladin", "Valkyrie"],
-    "Mage": ["Sorcière", "Magicienne", "Nécromancienne", "Illusionniste"],
-    "Martialiste Femme": ["Femme Martialiste", "Maître de la Lame", "Lame Runique"],
-    "Martialiste Homme": ["Homme Martialiste", "Maître de la Lame", "Lame Runique"],
-    "Assassin": ["Assassin", "Tueur de l'ombre", "Sombra", "Saboteur"],
-    "Gunner": ["Gunner", "Sniper", "Canonnière", "Artilleur"],
-    "Gunneuse": ["Gunneuse", "Sniper", "Canonnière", "Artilleuse"],
-    "Spécialiste": ["Spécialiste", "Médecin", "Ingénieur", "Stratégiste"]
+    "Guerrier": ["Berserker", "Paladin", "Destructeur", "Gunlancer"],
+    "Guerrière": ["Slayer", "Paladine"],
+    "Mage": ["Sorcière", "Arcaniste", "Barde", "Invocatrice"],
+    "Martialiste Femme": ["Elementiste", "Spirite", "Lanicière","Pugiliste"],
+    "Martialiste Homme": ["Striker", "Breaker"],
+    "Assassin": ["Sanguelame", "Démoniste", "Faucheuse", "Dévoreuse d'âme"],
+    "Gunner": ["Gunner", "Sagittaire", "Artilleur", "Machiniste"],
+    "Gunneuse": ["Gunneuse"],
+    "Spécialiste": ["Artiste", "Helètempète", "Ame sauvage",]
 };
 
 // Initialisation Firebase
