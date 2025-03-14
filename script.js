@@ -37,6 +37,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Configuration FullCalendar
     let calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
+        firstDay:3,
+        slotMinTime: "18:00:00",
+        slotLabelInterval: "01:00:00", // Affichage des labels toutes les heures
+        expandRows: true, // Ajuste la hauteur du calendrier
         locale: 'fr',
         editable: false,
         selectable: false,
@@ -46,7 +50,12 @@ document.addEventListener('DOMContentLoaded', function () {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        events: [], // Initialement vide, les événements seront chargés via Firestore
+        events: [],
+        eventOverlap: false,
+        slotEventOverlap: false, // Empêche visuellement le chevauchement
+        eventResourceEditable: false, // Empêche le déplacement des événements
+        displayEventTime: true, // Affiche bien les horaires
+        resourceOrder: 'startTime', // Initialement vide, les événements seront chargés via Firestore
         eventClick: function(info) {
             // Mettre à jour le tableau avec les informations du raid sélectionné
             updateRaidDetails(info.event.id);
@@ -239,49 +248,67 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Afficher les détails du raid
-    function updateRaidDetails(raidId) {
-        db.collection("raids").doc(raidId).get().then(doc => {
-            if (doc.exists) {
-                let raidData = doc.data();
-                let inscriptionsList = raidData.inscriptions || [];
+function updateRaidDetails(raidId) {
+    db.collection("raids").doc(raidId).get().then(doc => {
+        if (doc.exists) {
+            let raidData = doc.data();
+            let inscriptionsList = raidData.inscriptions || [];
 
-                document.getElementById('raid-detail-title').innerText = raidData.title;
+            document.getElementById('raid-detail-title').innerText = raidData.title;
 
-                // Vérifier si datTime existe et est valide
-                if (raidData.datTime && raidData.datTime.seconds) {
-                    document.getElementById('raid-detail-date').innerText = new Date(raidData.datTime.seconds * 1000).toLocaleDateString();
-                    document.getElementById('raid-detail-time').innerText = new Date(raidData.datTime.seconds * 1000).toLocaleTimeString();
-                } else {
-                    console.error("Erreur : datTime non défini ou mal formaté !");
-                }
-
-                // Vider la liste des inscriptions avant de la remplir
-                let inscriptionsListElement = document.getElementById('raid-detail-inscriptions-list');
-                inscriptionsListElement.innerHTML = '';
-
-                // Remplir la liste des inscriptions avec les joueurs
-                inscriptionsList.forEach(player => {
-                    let Pseudo = player.Pseudo
-                    let Classe = player.Classe
-                    let listItem = document.createElement('li');
-                    listItem.innerText = `${Pseudo} (${Classe})`;
-                    inscriptionsListElement.appendChild(listItem);
-                });
-
-                // Afficher la popup avec les détails du raid
-                document.getElementById('raid-detail-popup').style.display = 'block';
+            // Vérifier si datTime existe et est valide
+            if (raidData.datTime && raidData.datTime.seconds) {
+                document.getElementById('raid-detail-date').innerText = new Date(raidData.datTime.seconds * 1000).toLocaleDateString();
+                document.getElementById('raid-detail-time').innerText = new Date(raidData.datTime.seconds * 1000).toLocaleTimeString();
             } else {
-                console.error("Raid non trouvé !");
+                console.error("Erreur : datTime non défini ou mal formaté !");
             }
-        }).catch(error => {
-            console.error("Erreur de récupération des données du raid :", error);
-        });
-    }
 
-    // Fermer le pop-up
-    document.getElementById('popup-close-btn').addEventListener('click', function () {
-        document.getElementById('raid-detail-popup').style.display = 'none';
+            // Vider la liste des inscriptions avant de la remplir
+            let inscriptionsListElement = document.getElementById('raid-detail-inscriptions-list');
+            inscriptionsListElement.innerHTML = '';
+
+            // Remplir la liste des inscriptions avec les joueurs
+            inscriptionsList.forEach(player => {
+                let Pseudo = player.Pseudo;
+                let Classe = player.Classe;
+                let listItem = document.createElement('li');
+                listItem.innerText = `${Pseudo} (${Classe})`;
+                inscriptionsListElement.appendChild(listItem);
+            });
+
+            // Afficher la popup avec les détails du raid
+            const popup = document.getElementById('raid-detail-popup');
+            const popupContent = document.querySelector('.popup-content'); // Assurez-vous que le contenu a cette classe
+            const closeButton = document.getElementById('popup-close-btn');
+
+            popup.style.display = 'block';
+
+            // Fonction pour fermer la pop-up
+            function closePopup() {
+                popup.style.display = 'none';
+            }
+
+            // Supprimer les anciens écouteurs avant d'en ajouter de nouveaux
+            closeButton.removeEventListener('click', closePopup);
+            closeButton.addEventListener('click', closePopup);
+
+            popup.removeEventListener('click', closePopup);
+            popup.addEventListener('click', function (event) {
+                if (!popupContent.contains(event.target)) {
+                    closePopup();
+                }
+            });
+
+        } else {
+            console.error("Raid non trouvé !");
+        }
+    }).catch(error => {
+        console.error("Erreur de récupération des données du raid :", error);
     });
+}
+
+
 
     // Authentification des utilisateurs
     auth.onAuthStateChanged(user => {
