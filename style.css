@@ -1,7 +1,7 @@
 /* ------ Styles Généraux ------ */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #0e0d0d;
+    background-color: #121212;
     color: #e0c28b;
     margin: 0;
     padding: 0;
@@ -14,11 +14,13 @@ header {
     padding: 20px;
     text-align: center;
     border-bottom: 3px solid #d4af37;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.6);
 }
 
 h1 {
     font-size: 2.5em;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+    color: #fff;
 }
 
 /* ------ Navigation ------ */
@@ -28,10 +30,6 @@ nav ul {
     display: flex;
     justify-content: center;
     gap: 20px;
-}
-
-nav ul li {
-    display: inline;
 }
 
 nav ul li a {
@@ -46,6 +44,7 @@ nav ul li a {
 nav ul li a:hover {
     color: #fff;
     border-bottom: 2px solid #d4af37;
+    transform: scale(1.1);
 }
 
 /* ------ Sections ------ */
@@ -55,39 +54,51 @@ main {
 }
 
 section {
-    background: rgba(20, 20, 20, 0.8);
+    background: rgba(20, 20, 20, 0.9);
     border: 2px solid #d4af37;
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: 10px;
+    padding: 25px;
     margin-bottom: 40px;
-    box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.4);
+    box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.3);
+    transition: transform 0.3s ease-in-out;
+}
+
+section:hover {
+    transform: scale(1.02);
 }
 
 h2 {
-    font-size: 2em;
+    font-size: 2.2em;
     margin-bottom: 15px;
     color: #d4af37;
+    text-shadow: 1px 1px 10px rgba(212, 175, 55, 0.5);
 }
 
-/* ------ Planning (Calendrier) ------ */
-#calendar {
-    background: rgba(30, 30, 30, 0.9);
-    color: white;
-    border-radius: 10px;
-    padding: 10px;
-    max-width: 800px;
-    margin: auto;
-    border: 2px solid #d4af37;
-    box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.3);
+/* ------ Boutons ------ */
+button {
+    background-color: #d4af37;
+    color: black;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
 }
 
+button:hover {
+    background-color: #fff;
+    color: #222;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
 
 /* ------ Formulaires ------ */
-input, select, button {
+input, select {
     margin: 10px;
     padding: 12px;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 8px;
     border: 1px solid #d4af37;
     background: rgba(50, 50, 50, 0.8);
     color: white;
@@ -99,38 +110,47 @@ input, select, button {
     transition: all 0.3s ease;
 }
 
-button {
-    background-color: #d4af37;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    background-color: #fff;
-    color: #222;
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
-}
-
-button:focus, input:focus, select:focus {
+input:focus, select:focus {
     outline: none;
     border-color: #d4af37;
     box-shadow: 0 0 5px rgba(212, 175, 55, 0.7);
 }
 
-/* ------ Liste des inscrits ------ */
-#inscription-list {
-    list-style: none;
-    padding: 0;
+/* ------ Pop-up ------ */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
-#inscription-list li {
-    background: rgba(50, 50, 50, 0.8);
-    border: 1px solid #d4af37;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 5px;
+.popup-content {
+    background-color: #222;
+    padding: 20px;
+    margin: 50px auto;
+    width: 350px;
+    text-align: center;
+    border-radius: 10px;
+    border: 2px solid #d4af37;
+    box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.4);
+}
+
+.popup-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #d4af37;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.popup-close-btn:hover {
+    color: #fff;
 }
 
 /* ------ Footer ------ */
@@ -141,106 +161,18 @@ footer {
     color: #e0c28b;
     font-size: 0.9em;
 }
-
-/* ------ Boutons Vue Mois/Semaine ------ */
-.view-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.view-buttons button {
-    background-color: #d4af37;
-    color: black;
-    font-weight: bold;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: 0.3s;
-}
-
-.view-buttons button:hover {
-    background-color: #fff;
-    color: #222;
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
-}
-
-/* ------ Retirer un Raid ------ */
-#retirer-raid {
-    margin-top: 30px;
-}
-
-/* ------ Clear All ------ */
-#clear-all-btn {
-    background-color: red;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-}
-
-/* ------ Améliorations supplémentaires ------ */
-input:hover, select:hover, button:hover {
-    background: rgba(60, 60, 60, 0.9);
-    border-color: #d4af37;
-}
-
-/* Style du conteneur principal */
-#planning-container {
-    display: flex;
-    justify-content: space-between;
-}
-
-/* Style du tableau des détails du raid */
-#raid-details-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#raid-details-table th, #raid-details-table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ccc;
-}
-
-/* Style du Pop-up */
-.popup {
-    display: none; /* Caché par défaut */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
-    z-index: 1000;
-}
-
-.popup-content {
-    position: relative; /* Nécessaire pour positionner la croix à l'intérieur */
-    background-color: rgb(0, 0, 0);
-    padding: 20px;
-    margin: 50px auto;
-    width: 300px;
-    text-align: center;
-    border-radius: 5px;
-}
-
-/* Style de la croix (bouton de fermeture) */
-.popup-close-btn {
+/* ------ Logos de la guilde ------ */
+.logo {
+    width: 80px; /* Taille du logo */
+    height: auto;
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
-    color: #fff; /* Couleur de la croix */
-    cursor: pointer;
-    transition: color 0.3s ease;
+    top: 20px;
 }
 
-.popup-close-btn:hover {
-    color: #ccc; /* Change la couleur au survol */
+.logo.gauche {
+    left: 20px; /* Position gauche */
 }
 
+.logo.droite {
+    right: 20px; /* Position droite */
+}

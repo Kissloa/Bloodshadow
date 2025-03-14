@@ -343,9 +343,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     });
-});
-
-
 
     // Mettre à jour les options de classes en fonction de l'archétype
     document.getElementById('player-archtype').addEventListener('change', function () {
@@ -364,3 +361,4 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     });
+});
