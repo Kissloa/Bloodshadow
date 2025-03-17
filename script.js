@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         firstDay:3,
-        slotMinTime: "18:00:00",
         locale: 'fr',
         editable: false,
         selectable: false,
