@@ -275,6 +275,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Fermer la pop-up en cliquant n'importe où
             popup.addEventListener('click', closePopup);
+            // Fermer la pop-up en cliquant en dehors du contenu
+            popup.addEventListener('click', function (event) {
+                if (event.target === this) { 
+                    closePopup();
+                }
+            });
+
         } else {
             console.error("Raid non trouvé !");
         }
