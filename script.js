@@ -241,48 +241,56 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Afficher les détails du raid
     function updateRaidDetails(raidId) {
-        db.collection("raids").doc(raidId).get().then(doc => {
-            if (doc.exists) {
-                let raidData = doc.data();
-                let inscriptionsList = raidData.inscriptions || [];
+    db.collection("raids").doc(raidId).get().then(doc => {
+        if (doc.exists) {
+            let raidData = doc.data();
+            let inscriptionsList = raidData.inscriptions || [];
 
-                document.getElementById('raid-detail-title').innerText = raidData.title;
+            document.getElementById('raid-detail-title').innerText = raidData.title;
 
-                // Vérifier si datTime existe et est valide
-                if (raidData.datTime && raidData.datTime.seconds) {
-                    document.getElementById('raid-detail-date').innerText = new Date(raidData.datTime.seconds * 1000).toLocaleDateString();
-                    document.getElementById('raid-detail-time').innerText = new Date(raidData.datTime.seconds * 1000).toLocaleTimeString();
-                } else {
-                    console.error("Erreur : datTime non défini ou mal formaté !");
-                }
-
-                // Vider la liste des inscriptions avant de la remplir
-                let inscriptionsListElement = document.getElementById('raid-detail-inscriptions-list');
-                inscriptionsListElement.innerHTML = '';
-
-                // Remplir la liste des inscriptions avec les joueurs
-                inscriptionsList.forEach(player => {
-                    let Pseudo = player.Pseudo
-                    let Classe = player.Classe
-                    let listItem = document.createElement('li');
-                    listItem.innerText = `${Pseudo} (${Classe})`;
-                    inscriptionsListElement.appendChild(listItem);
-                });
-
-                // Afficher la popup avec les détails du raid
-                document.getElementById('raid-detail-popup').style.display = 'block';
+            // Vérifier si datTime existe et est valide
+            if (raidData.datTime && raidData.datTime.seconds) {
+                document.getElementById('raid-detail-date').innerText = new Date(raidData.datTime.seconds * 1000).toLocaleDateString();
+                document.getElementById('raid-detail-time').innerText = new Date(raidData.datTime.seconds * 1000).toLocaleTimeString();
             } else {
-                console.error("Raid non trouvé !");
+                console.error("Erreur : datTime non défini ou mal formaté !");
             }
-        }).catch(error => {
-            console.error("Erreur de récupération des données du raid :", error);
-        });
-    }
 
-    // Fermer le pop-up
-    document.getElementById('popup-close-btn').addEventListener('click', function () {
-        document.getElementById('raid-detail-popup').style.display = 'none';
+            // Vider la liste des inscriptions avant de la remplir
+            let inscriptionsListElement = document.getElementById('raid-detail-inscriptions-list');
+            inscriptionsListElement.innerHTML = '';
+
+            // Remplir la liste des inscriptions avec les joueurs
+            inscriptionsList.forEach(player => {
+                let Pseudo = player.Pseudo;
+                let Classe = player.Classe;
+                let listItem = document.createElement('li');
+                listItem.innerText = `${Pseudo} (${Classe})`;
+                inscriptionsListElement.appendChild(listItem);
+            });
+
+            // Afficher la popup avec les détails du raid
+            let popup = document.getElementById('raid-detail-popup');
+            popup.style.display = 'block';
+
+            // Fermer la pop-up en cliquant n'importe où
+            popup.addEventListener('click', closePopup);
+        } else {
+            console.error("Raid non trouvé !");
+        }
+    }).catch(error => {
+        console.error("Erreur de récupération des données du raid :", error);
     });
+}
+
+// Fonction pour fermer la pop-up
+function closePopup() {
+    document.getElementById('raid-detail-popup').style.display = 'none';
+}
+
+// Fermer la pop-up en cliquant sur le bouton de fermeture
+document.getElementById('popup-close-btn').addEventListener('click', closePopup);
+
 
     // Authentification des utilisateurs
     auth.onAuthStateChanged(user => {
