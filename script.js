@@ -260,12 +260,18 @@ document.addEventListener('DOMContentLoaded', function () {
             let inscriptionsListElement = document.getElementById('raid-detail-inscriptions-list');
             inscriptionsListElement.innerHTML = '';
 
-            // Remplir la liste des inscriptions avec les joueurs
+            // Remplir la liste des inscriptions avec les joueurs + bouton de désinscription
             inscriptionsList.forEach(player => {
-                let Pseudo = player.Pseudo;
-                let Classe = player.Classe;
                 let listItem = document.createElement('li');
-                listItem.innerText = `${Pseudo} (${Classe})`;
+                listItem.innerText = `${player.Pseudo} (${player.Classe}) `;
+
+                let unsubscribeBtn = document.createElement('button');
+                unsubscribeBtn.innerText = "❌";
+                unsubscribeBtn.style.marginLeft = "10px";
+                unsubscribeBtn.style.cursor = "pointer";
+                unsubscribeBtn.onclick = () => unsubscribeFromRaid(raidId, player.Pseudo);
+
+                listItem.appendChild(unsubscribeBtn);
                 inscriptionsListElement.appendChild(listItem);
             });
 
@@ -273,8 +279,6 @@ document.addEventListener('DOMContentLoaded', function () {
             let popup = document.getElementById('raid-detail-popup');
             popup.style.display = 'block';
 
-            // Fermer la pop-up en cliquant n'importe où
-            popup.addEventListener('click', closePopup);
             // Fermer la pop-up en cliquant en dehors du contenu
             popup.addEventListener('click', function (event) {
                 if (event.target === this) { 
@@ -287,6 +291,31 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }).catch(error => {
         console.error("Erreur de récupération des données du raid :", error);
+    });
+}
+
+// Fonction de désinscription d'un raid
+function unsubscribeFromRaid(raidId, playerName) {
+    db.collection("raids").doc(raidId).get().then(doc => {
+        if (doc.exists) {
+            let raidData = doc.data();
+            let newInscriptions = (raidData.inscriptions || []).filter(player => player.Pseudo !== playerName);
+
+            // Mettre à jour les inscriptions dans Firestore
+            db.collection("raids").doc(raidId).update({
+                inscriptions: newInscriptions
+            }).then(() => {
+                console.log(`Joueur ${playerName} désinscrit du raid ${raidId}`);
+                updateRaidDetails(raidId); // Rafraîchir les détails du raid
+            }).catch(error => {
+                console.error("Erreur lors de la mise à jour :", error);
+            });
+
+        } else {
+            console.error("Raid non trouvé !");
+        }
+    }).catch(error => {
+        console.error("Erreur lors de la récupération du raid :", error);
     });
 }
 

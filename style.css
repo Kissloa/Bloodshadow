@@ -9,8 +9,7 @@ body {
 
 /* ------ Header ------ */
 header {
-    background: url('https://assets.playlostark.com/static/f47b0b52cc50476e9cdcb2260265d226/ac92f/header_background.jpg') no-repeat center;
-    background-size: cover;
+    background: url('https://assets.playlostark.com/static/f47b0b52cc50476e9cdcb2260265d226/ac92f/header_background.jpg') no-repeat center center/cover;
     padding: 20px;
     text-align: center;
     border-bottom: 3px solid #d4af37;
@@ -20,7 +19,7 @@ header {
 h1 {
     font-size: 2.5em;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
-    color: #fff;
+    color: #d4af37;
 }
 
 /* ------ Navigation ------ */
@@ -82,7 +81,7 @@ button {
     padding: 12px 20px;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
     border: none;
 }
 
@@ -95,7 +94,7 @@ button:hover {
 
 /* ------ Formulaires ------ */
 input, select {
-    margin: 10px;
+    margin: 10px 0;
     padding: 12px;
     font-size: 16px;
     border-radius: 8px;
@@ -161,6 +160,7 @@ footer {
     color: #e0c28b;
     font-size: 0.9em;
 }
+
 /* ------ Logos de la guilde ------ */
 .logo {
     width: 80px; /* Taille du logo */
@@ -175,4 +175,54 @@ footer {
 
 .logo.droite {
     right: 20px; /* Position droite */
+}
+
+/* ------ FullCalendar ------ */
+.fc-timegrid-slot {
+    height: 50px; /* Augmente l'espace général entre les heures */
+}
+
+.fc-timegrid-slot[data-time="21:00:00"],
+.fc-timegrid-slot[data-time="22:00:00"],
+.fc-timegrid-slot[data-time="23:00:00"] {
+    height: 100px !important; /* Augmente la hauteur des créneaux de 21h à 00h */
+}
+
+/* ------ Liste des inscriptions dans la pop-up ------ */
+#raid-detail-inscriptions-list-container {
+    max-height: 200px; /* Limite la hauteur pour éviter un débordement */
+    overflow-y: auto; /* Ajoute un défilement si nécessaire */
+    padding: 10px;
+    background: rgba(50, 50, 50, 0.8);
+    border-radius: 8px;
+}
+
+/* Liste des joueurs inscrits */
+#raid-detail-inscriptions-list {
+    list-style: none;
+    padding: 0;
+}
+
+#raid-detail-inscriptions-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #d4af37;
+}
+
+/* Bouton de désinscription */
+.remove-player-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.remove-player-btn:hover {
+    background-color: darkred;
 }
