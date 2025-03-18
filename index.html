@@ -43,6 +43,14 @@
                 <div id="calendar"></div>
             </section>
 
+            <!-- Récapitulatif des raids du jour -->
+            <section id="recap-raids" style="width: 300px; margin-left: 20px;">
+                <h2>Raids d'aujourd'hui</h2>
+                <ul id="raid-list-today">
+                    <li>Aucun raid prévu aujourd'hui.</li>
+                </ul>
+            </section>
+
             <!-- Tableau des détails du raid -->
             <section id="detail-raid" style="display: none;">
                 <h2>Détails du Raid</h2>
@@ -90,6 +98,8 @@
             <h2>Ajouter un Raid</h2>
             <label for="raid-select">Choisir un Raid :</label>
             <select id="raid-select">
+                <option value="Thaemine NM">Thaemine NM Raid à 8 Joueurs Ilvl : 1610</option>
+                <option value="Thaemine HM">Thaemine HM Raid à 8 Joueurs Ilvl : 1620</option>
                 <option value="Behemoth">Behemoth Raid à 16 Joueurs Ilvl : 1620</option>
                 <option value="Echidna NM">Echidna NM Raid à 8 Joueurs Ilvl : 1620</option>
                 <option value="Echidna HM">Echidna HM Raid à 8 Joueurs Ilvl : 1630</option>
@@ -97,8 +107,8 @@
                 <option value="Aegir HM">Aegir HM Raid à 8 Joueurs Ilvl : 1680</option>
                 <option value="Brelshaza NM">Brelshaza NM Raid à 8 Joueurs Ilvl : 1670</option>
                 <option value="Brelshaza HM">Brelshaza HM Raid à 8 Joueurs Ilvl : 1690</option>
-                <option value="Thaemine NM">Thaemine NM Raid à 8 Joueurs Ilvl : 1680</option>
-                <option value="Thaemine HM">Thaemine HM Raid à 8 Joueurs Ilvl : 1700</option>
+                <option value="Thaemine NM Rematch">Thaemine NM Rematch Raid à 8 Joueurs Ilvl : 1680</option>
+                <option value="Thaemine HM Rematch ">Thaemine HM Rematch Raid à 8 Joueurs Ilvl : 1700</option>
             </select>
             <label for="raid-date">Date du Raid :</label>
             <input type="date" id="raid-date">
@@ -113,9 +123,11 @@
         <section id="retirer-raid">
             <h2>Retirer un Raid</h2>
             <label for="raid-select-remove">Sélectionner un Raid à Retirer :</label>
+            <br>
             <select id="raid-select-remove">
                 <option value="">-- Sélectionner un Raid --</option>
             </select>
+            <br>
             <button id="remove-raid-btn">Retirer un Raid</button>
         </section>
 
@@ -146,10 +158,11 @@
             </select>
 
             <label for="raid-select-inscription">Choisir un Raid :</label>
+            <br>
             <select id="raid-select-inscription">
                 <option value="" disabled selected>-- Sélectionnez un Raid --</option>
             </select>
-
+            <br>
             <label for="player-name">Votre Pseudo :</label>
             <input type="text" id="player-name" placeholder="Ex : Kïsst" required>
             <button id="inscription-btn">S'inscrire</button>
@@ -162,6 +175,7 @@
 
     <!-- Fichier JS -->
     <script src="script.js"></script>
+    <script type="module" src="membres.js"></script>
 
 </body>
 

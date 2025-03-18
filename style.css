@@ -5,21 +5,26 @@ body {
     color: #e0c28b;
     margin: 0;
     padding: 0;
+    overflow-x: hidden; /* Empêche le défilement horizontal */
+    transition: background 0.3s ease; /* Douce transition lors du changement de fond */
 }
+
 
 /* ------ Header ------ */
 header {
-    background: url('https://assets.playlostark.com/static/f47b0b52cc50476e9cdcb2260265d226/ac92f/header_background.jpg') no-repeat center center/cover;
-    padding: 20px;
+    padding: 40px 20px;
     text-align: center;
     border-bottom: 3px solid #d4af37;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.6);
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 2;
 }
 
 h1 {
-    font-size: 2.5em;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+    font-size: 3em;
+    text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.8);
     color: #d4af37;
+    letter-spacing: 2px;
 }
 
 /* ------ Navigation ------ */
@@ -28,16 +33,17 @@ nav ul {
     padding: 0;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 30px;
 }
 
 nav ul li a {
     color: #e0c28b;
     text-decoration: none;
-    font-size: 1.2em;
-    padding: 10px 15px;
-    transition: all 0.3s ease-in-out;
+    font-size: 1.4em;
+    font-weight: 500;
+    padding: 12px 18px;
     border-bottom: 2px solid transparent;
+    transition: all 0.3s ease-in-out;
 }
 
 nav ul li a:hover {
@@ -48,29 +54,30 @@ nav ul li a:hover {
 
 /* ------ Sections ------ */
 main {
-    padding: 40px 10%;
+    padding: 60px 10%;
     text-align: center;
 }
 
 section {
     background: rgba(20, 20, 20, 0.9);
-    border: 2px solid #d4af37;
-    border-radius: 10px;
-    padding: 25px;
-    margin-bottom: 40px;
-    box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.3);
-    transition: transform 0.3s ease-in-out;
+    border: 3px solid #d4af37;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 50px;
+    box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.5);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 section:hover {
-    transform: scale(1.02);
+    transform: scale(1.03);
+    box-shadow: 0px 0px 20px rgba(212, 175, 55, 0.7);
 }
 
 h2 {
-    font-size: 2.2em;
-    margin-bottom: 15px;
+    font-size: 2.5em;
+    margin-bottom: 20px;
     color: #d4af37;
-    text-shadow: 1px 1px 10px rgba(212, 175, 55, 0.5);
+    text-shadow: 2px 2px 8px rgba(212, 175, 55, 0.4);
 }
 
 /* ------ Boutons ------ */
@@ -78,31 +85,32 @@ button {
     background-color: #d4af37;
     color: black;
     font-weight: bold;
-    padding: 12px 20px;
-    border-radius: 8px;
+    padding: 15px 25px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
     border: none;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 button:hover {
     background-color: #fff;
     color: #222;
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 0px 6px 20px rgba(255, 255, 255, 0.6);
     transform: scale(1.05);
 }
 
 /* ------ Formulaires ------ */
 input, select {
-    margin: 10px 0;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 8px;
+    margin: 12px 0;
+    padding: 14px;
+    font-size: 18px;
+    border-radius: 10px;
     border: 1px solid #d4af37;
     background: rgba(50, 50, 50, 0.8);
     color: white;
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -112,7 +120,7 @@ input, select {
 input:focus, select:focus {
     outline: none;
     border-color: #d4af37;
-    box-shadow: 0 0 5px rgba(212, 175, 55, 0.7);
+    box-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
 }
 
 /* ------ Pop-up ------ */
@@ -123,26 +131,26 @@ input:focus, select:focus {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     z-index: 1000;
 }
 
 .popup-content {
     background-color: #222;
-    padding: 20px;
-    margin: 50px auto;
-    width: 350px;
+    padding: 25px;
+    margin: 80px auto;
+    width: 400px;
     text-align: center;
-    border-radius: 10px;
-    border: 2px solid #d4af37;
-    box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.4);
+    border-radius: 12px;
+    border: 3px solid #d4af37;
+    box-shadow: 0px 0px 20px rgba(212, 175, 55, 0.5);
 }
 
 .popup-close-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
     color: #d4af37;
     cursor: pointer;
     transition: color 0.3s ease;
@@ -156,45 +164,46 @@ input:focus, select:focus {
 footer {
     text-align: center;
     background-color: black;
-    padding: 20px;
+    padding: 30px 20px;
     color: #e0c28b;
-    font-size: 0.9em;
+    font-size: 1.0em;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.7);
 }
 
 /* ------ Logos de la guilde ------ */
 .logo {
-    width: 80px; /* Taille du logo */
+    width: 90px; /* Taille du logo */
     height: auto;
     position: absolute;
     top: 20px;
 }
 
 .logo.gauche {
-    left: 20px; /* Position gauche */
+    left: 30px; /* Position gauche */
 }
 
 .logo.droite {
-    right: 20px; /* Position droite */
+    right: 30px; /* Position droite */
 }
 
 /* ------ FullCalendar ------ */
 .fc-timegrid-slot {
-    height: 50px; /* Augmente l'espace général entre les heures */
+    height: 60px; /* Augmente l'espace général entre les heures */
 }
 
 .fc-timegrid-slot[data-time="21:00:00"],
 .fc-timegrid-slot[data-time="22:00:00"],
 .fc-timegrid-slot[data-time="23:00:00"] {
-    height: 100px !important; /* Augmente la hauteur des créneaux de 21h à 00h */
+    height: 120px !important; /* Augmente la hauteur des créneaux de 21h à 00h */
 }
 
 /* ------ Liste des inscriptions dans la pop-up ------ */
 #raid-detail-inscriptions-list-container {
-    max-height: 200px; /* Limite la hauteur pour éviter un débordement */
+    max-height: 220px; /* Limite la hauteur pour éviter un débordement */
     overflow-y: auto; /* Ajoute un défilement si nécessaire */
-    padding: 10px;
-    background: rgba(50, 50, 50, 0.8);
-    border-radius: 8px;
+    padding: 15px;
+    background: rgba(50, 50, 50, 0.9);
+    border-radius: 10px;
 }
 
 /* Liste des joueurs inscrits */
@@ -207,17 +216,17 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #d4af37;
+    padding: 10px;
+    border-bottom: 2px solid #d4af37;
+    color: #d4af37;
 }
 
-/* Bouton de désinscription */
 .remove-player-btn {
     background-color: red;
     color: white;
     border: none;
-    padding: 5px 10px;
-    font-size: 0.9em;
+    padding: 7px 12px;
+    font-size: 1em;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -226,3 +235,74 @@ footer {
 .remove-player-btn:hover {
     background-color: darkred;
 }
+
+/* ------ Récapitulatif des raids du jour ------ */
+#recap-raids {
+    width: 330px;
+    background: rgba(30, 30, 30, 0.95);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.6);
+    text-align: left;
+    margin: 0 auto; /* Centrer le récapitulatif sur l'écran */
+}
+
+#recap-raids h2 {
+    font-size: 2.0em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#raid-list-today {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#raid-list-today li {
+    background: rgba(50, 50, 50, 0.8);
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border-left: 5px solid #d4af37;
+    transition: background 0.3s ease-in-out;
+    display: flex;
+    justify-content: space-between; /* Aligner les éléments à gauche et droite */
+    align-items: center;
+}
+
+#raid-list-today li:hover {
+    background: rgba(80, 80, 80, 0.9);
+}
+
+#raid-list-today li:before {
+    content: "⚔️"; /* Icône épée pour le thème Lost Ark */
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+#raid-list-today li span {
+    flex-grow: 1;
+    font-size: 1.2em;
+    color: #f1c40f; /* Texte en or */
+}
+
+/* Centrer les boutons d'inscription ou de désinscription dans le récapitulatif */
+#raid-select-remove, #raid-select-inscription {
+    color: white;
+    font-size: 17px;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 6px;
+    border: none; /* Faire en sorte que le bouton prenne toute la largeur disponible */
+    text-align: center; /* Centrer le texte du bouton */
+    display: inline-block; /* Pour assurer un affichage en ligne et centré */
+    transition: all 0.3s ease;
+}
+
+#raid-select-remove:hover, #raid-select-inscription:hover {
+    transform: scale(1.05);
+}
+
+

@@ -59,49 +59,158 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Charger les raids en temps réel depuis Firestore
     function loadRaidsFromFirestore() {
-        db.collection("raids").onSnapshot((snapshot) => {
-            // Nettoyer les événements existants
-            calendar.getEvents().forEach(event => event.remove());
-
-            // Vider les options des sélecteurs
-            let raidSelectRemove = document.getElementById('raid-select-remove');
-            let raidSelectInscription = document.getElementById('raid-select-inscription');
-            raidSelectRemove.innerHTML = '<option value="">-- Sélectionner un Raid --</option>';
-            raidSelectInscription.innerHTML = '<option value="">-- Sélectionner un Raid --</option>';
-
-            // Ajouter de nouveaux événements à partir de Firestore
-            snapshot.forEach(doc => {
-                let raid = doc.data();
-                let raidDateTime = raid.datTime.toDate();  // Convertir la date et l'heure en objet Date
-                let formattedDate = raidDateTime.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                let formattedTime = raidDateTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-
-                // Créer un événement pour FullCalendar
-                let newEvent = { 
-                    id: doc.id, 
-                    title: raid.title, 
-                    start: raid.datTime.toDate(),  // Assurez-vous de convertir en Date avant d'ajouter
-                    extendedProps: {
-                        formattedDate,
-                        formattedTime
+        const today = new Date();
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0)).getTime();  // 00:00:00
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999)).getTime();  // 23:59:59
+        const raidListToday = document.getElementById('raid-list-today');
+        
+        // Supprimer la phrase "Aucun raid prévu aujourd'hui." si elle existe
+        const noRaidsMessage = raidListToday.querySelector('li');
+        if (noRaidsMessage && noRaidsMessage.textContent === 'Aucun raid prévu aujourd\'hui.') {
+            raidListToday.removeChild(noRaidsMessage);
+        }
+    
+        raidListToday.innerHTML = '';  // Vider la liste avant d'ajouter les raids du jour
+    
+        // Requête Firestore pour récupérer les raids triés par 'datTime' (date d'ajout)
+        db.collection("raids")
+            .orderBy("datTime")  // Tri par date d'ajout (datTime)
+            .onSnapshot((snapshot) => {
+                // Nettoyer les événements existants dans le calendrier
+                calendar.getEvents().forEach(event => event.remove());
+    
+                // Vider les options des sélecteurs
+                let raidSelectRemove = document.getElementById('raid-select-remove');
+                let raidSelectInscription = document.getElementById('raid-select-inscription');
+                raidSelectRemove.innerHTML = '<option value="">-- Sélectionner un Raid --</option>';
+                raidSelectInscription.innerHTML = '<option value="">-- Sélectionner un Raid --</option>';
+    
+                let raidsTodayAdded = false;  // Flag pour savoir si des raids sont ajoutés pour aujourd'hui
+    
+                // Ajouter de nouveaux événements à partir de Firestore
+                snapshot.forEach(doc => {
+                    let raid = doc.data();
+                    let raidDateTime = raid.datTime.toDate();  // Convertir la date et l'heure en objet Date
+                    let raidTimestamp = raidDateTime.getTime();
+                    let formattedDate = raidDateTime.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                    let formattedTime = raidDateTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    
+                    // Créer un événement pour FullCalendar
+                    let newEvent = { 
+                        id: doc.id, 
+                        title: raid.title, 
+                        start: raid.datTime.toDate(),  // Assurez-vous de convertir en Date avant d'ajouter
+                        extendedProps: {
+                            formattedDate,
+                            formattedTime
+                        }
+                    };
+                    calendar.addEvent(newEvent);
+    
+                    // Ajouter l'option avec le titre, la date et l'heure formatée
+                    let optionRemove = new Option(`${raid.title} - ${formattedDate} à ${formattedTime}`, doc.id);
+                    let optionInscription = new Option(`${raid.title} - ${formattedDate} à ${formattedTime}`, doc.id);
+                    raidSelectRemove.appendChild(optionRemove);
+                    raidSelectInscription.appendChild(optionInscription);
+    
+                    // Vérifier si le raid a lieu aujourd'hui
+                    if (raidTimestamp >= startOfDay && raidTimestamp <= endOfDay) {
+                        let optionToday = new Option(`${raid.title} - ${formattedDate} à ${formattedTime}`, doc.id);
+    
+                        // Ajouter un élément à la liste des raids d'aujourd'hui
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${raid.title} - ${formattedDate} à ${formattedTime}`;
+                        listItem.setAttribute('data-raid-id', doc.id); // Ajouter l'ID du raid pour l'utiliser plus tard
+                        raidListToday.appendChild(listItem);
+    
+                        // Ajouter un écouteur d'événement pour ouvrir la popup lors du clic
+                        listItem.addEventListener('click', function() {
+                            openRaidPopup(doc.id);
+                        });
+    
+                        raidsTodayAdded = true;  // Indiquer qu'un raid a été ajouté pour aujourd'hui
                     }
-                };
-                calendar.addEvent(newEvent);
-
-                // Ajouter l'option avec le titre, la date et l'heure formatée
-                let optionRemove = new Option(`${raid.title} - ${formattedDate} à ${formattedTime}`, doc.id);
-                let optionInscription = new Option(`${raid.title} - ${formattedDate} à ${formattedTime}`, doc.id);
-                raidSelectRemove.appendChild(optionRemove);
-                raidSelectInscription.appendChild(optionInscription);
+                });
+    
+                // Si aucun raid n'a été ajouté pour aujourd'hui, afficher "Aucun raid prévu aujourd'hui."
+                if (!raidsTodayAdded) {
+                    const noRaidsMessage = document.createElement('li');
+                    noRaidsMessage.textContent = 'Aucun raid prévu aujourd\'hui.';
+                    raidListToday.appendChild(noRaidsMessage);
+                }
+            }, (error) => {
+                console.error("❌ Erreur lors de la récupération des événements:", error);
+                alert("❌ " + error.message);
             });
-        }, (error) => {
-            console.error("❌ Erreur lors de la récupération des événements:", error);
-            alert("❌ " + error.message);
+    }
+    
+    
+    // Fonction pour ouvrir la popup avec les détails du raid
+    // Fonction pour ouvrir la popup avec les détails du raid
+    function openRaidPopup(raidId) {
+        const popup = document.getElementById('raid-detail-popup');
+        const popupTitle = document.getElementById('raid-detail-title');
+        const popupDate = document.getElementById('raid-detail-date');
+        const popupTime = document.getElementById('raid-detail-time');
+        const popupInscriptionsList = document.getElementById('raid-detail-inscriptions-list');
+
+        // Récupérer les informations du raid depuis Firestore
+        db.collection("raids").doc(raidId).get().then((doc) => {
+            if (doc.exists) {
+                const raid = doc.data();
+                const raidDateTime = raid.datTime.toDate();
+                const formattedDate = raidDateTime.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                const formattedTime = raidDateTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+                // Remplir la popup avec les informations du raid
+                popupTitle.textContent = raid.title;
+                popupDate.textContent = formattedDate;
+                popupTime.textContent = formattedTime;
+
+                // Afficher les inscriptions des joueurs
+                const playersList = raid.inscriptions || []; // Assurez-vous que raid.inscriptions est bien un tableau
+                popupInscriptionsList.innerHTML = ''; // Vider la liste des inscriptions avant de la remplir
+
+                if (Array.isArray(playersList) && playersList.length > 0) {
+                    // Si playersList est un tableau et contient des éléments
+                    playersList.forEach(player => {
+                        const playerItem = document.createElement('li');
+                        playerItem.textContent = `Pseudo: ${player.Pseudo} - Classe: ${player.Classe}`;
+                        popupInscriptionsList.appendChild(playerItem);
+                    });
+                } else {
+                    // Si la liste est vide ou non définie, afficher un message approprié
+                    const noPlayersItem = document.createElement('li');
+                    noPlayersItem.textContent = 'Aucun joueur inscrit';
+                    popupInscriptionsList.appendChild(noPlayersItem);
+                }
+
+                // Ouvrir la popup
+                popup.style.display = 'block';
+            } else {
+                console.log("Raid non trouvé");
+            }
+        }).catch((error) => {
+            console.error("Erreur lors de la récupération des informations du raid:", error);
         });
     }
 
-    loadRaidsFromFirestore(); // Charger les raids dès que le script est chargé
 
+    
+    // Fermer la popup avec la croix
+    document.getElementById('popup-close-btn').addEventListener('click', function() {
+        document.getElementById('raid-detail-popup').style.display = 'none';
+    });
+    
+    // Fermer la popup en cliquant n'importe où en dehors de la pop-up
+    document.getElementById('raid-detail-popup').addEventListener('click', function(event) {
+        if (event.target === this) {  // Vérifie si le clic est effectué sur l'arrière-plan
+            this.style.display = 'none';
+        }
+    });
+    
+    loadRaidsFromFirestore(); // Charger les raids dès que le script est chargé
+    
     // Ajouter un raid
     document.getElementById('add-raid-btn').addEventListener('click', function () {
         let raidName = document.getElementById('raid-select').value;
@@ -409,3 +518,66 @@ document.getElementById('popup-close-btn').addEventListener('click', closePopup)
             });
         }
     });
+    function ajouterPersonnages(membreId) {
+        const personnages = [
+            {
+                nom_personnage: "Soulmania",
+                classe: "Wardancer",
+                ilvl: 1692.5,
+                raids: ["Brelshaza", "Aegir HM", "Behemoth"],
+                synergie: "Oui",
+                type: "Crit Rate +10%"
+            },
+            {
+                nom_personnage: "Soulanature",
+                classe: "Wildsoul",
+                ilvl: 1680,
+                raids: ["Brelshaza", "Aegir HM", "Behemoth"],
+                synergie: "Oui",
+                type: "Break Armor -12%"
+            },
+            {
+                nom_personnage: "Soulsofayaya",
+                classe: "Artist",
+                ilvl: 1660,
+                raids: ["Aegir", "Behemoth", "Echidna"],
+                synergie: "Oui",
+                type: "Brand Damage +10%"
+            },
+            {
+                nom_personnage: "Soulrotboy",
+                classe: "Scouter",
+                ilvl: 1660.17,
+                raids: ["Aegir", "Behemoth", "Echidna"],
+                synergie: "Oui",
+                type: "Atk Power up +6%"
+            },
+            {
+                nom_personnage: "Soulavoisacred",
+                classe: "Breaker",
+                ilvl: 1660.33,
+                raids: ["Aegir", "Behemoth", "Echidna"],
+                synergie: "Oui",
+                type: "Damage +6%"
+            },
+            {
+                nom_personnage: "Soulmaniacal",
+                classe: "Slayer",
+                ilvl: 1663,
+                raids: ["Aegir", "Behemoth", "Echidna"],
+                synergie: "Oui",
+                type: "Damage +6%"
+            }
+        ];
+    
+        // Ajouter les personnages dans la sous-collection "personnages"
+        personnages.forEach((personnage) => {
+            db.collection("membres").doc(membreId).collection("personnages").add(personnage)
+                .then(() => {
+                    console.log(`Personnage ${personnage.nom_personnage} ajouté avec succès.`);
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de l'ajout du personnage : ", error);
+                });
+        });
+    }
