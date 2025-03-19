@@ -69,7 +69,6 @@ section {
 }
 
 section:hover {
-    transform: scale(1.03);
     box-shadow: 0px 0px 20px rgba(212, 175, 55, 0.7);
 }
 
